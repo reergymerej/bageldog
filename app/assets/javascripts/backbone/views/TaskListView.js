@@ -18,15 +18,7 @@ var TaskListView = Backbone.View.extend({
 		this.subViews = [];
 
 		this.taskList = new TaskList();
-		this.taskList.fetch({
-			success:function(collection, models){
-				that.render();
-			},
-			error: function(){
-				console.error('unable to fetch collection');
-			}
-		});
-
+		
 		this.taskList.on('destroy', function(model, response, options){
 			
 			//	remove the subview reference
@@ -38,7 +30,28 @@ var TaskListView = Backbone.View.extend({
 			});
 		});
 
-		this.taskList.on('change', function(model, changed){});
+		this.taskList.on('change', function(model, changed){
+			// console.log('task list changed', model, changed);
+		});
+
+
+		this.render();
+		this.refreshTasks();
+		setInterval(_.bind(this.refreshTasks, this), 3000);
+	},
+
+	refreshTasks: function(){
+		
+		var that = this;
+
+		this.taskList.fetch({
+			success:function(collection, models){
+				that.renderSubViews();
+			},
+			error: function(){
+				console.error('unable to fetch collection');
+			}
+		});
 	},
 
 	render: function(){
@@ -48,6 +61,14 @@ var TaskListView = Backbone.View.extend({
 		
 		this.$el.html(template);
 
+		$('input[name="owner"]', this.$el).val(localStorage.owner);
+	},
+
+	renderSubViews: function(){
+		var that = this;
+
+		$('#tasks').empty();
+
 		//	create a subview for each Task
 		$.each(this.taskList.models, function(i, task){
 			that.addSubView(task);
@@ -56,7 +77,8 @@ var TaskListView = Backbone.View.extend({
 
 	events: {
 		'change #finished': 'toggleFinished',
-		'submit form': 'submitForm'
+		'submit form': 'submitForm',
+		'change [name="owner"]': 'changeOwner'
 	},
 
 	addSubView: function(task){
@@ -87,7 +109,8 @@ var TaskListView = Backbone.View.extend({
 	submitForm: function(ev){
 		var that = this,
 			task,
-			name = $.trim( $('[name="name"]', ev.currentTarget).val() );
+			nameEl = $('[name="name"]', ev.currentTarget),
+			name = $.trim( nameEl.val() );
 
 		$('input', ev.currentTarget).val('');
 
@@ -103,6 +126,19 @@ var TaskListView = Backbone.View.extend({
 				}
 			});
 		};
+
+		nameEl.focus();
+
 		return false;
+	},
+
+	changeOwner: function(ev){
+		var ownerVal = $(ev.currentTarget).val();
+
+		if(ownerVal){
+			localStorage.owner = ownerVal;
+		} else {
+			delete localStorage.owner;
+		}
 	}
 });

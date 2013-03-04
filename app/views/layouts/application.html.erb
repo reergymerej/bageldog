@@ -17,22 +17,29 @@
 	<%= javascript_include_tag "application" %>
 
 	<script type="text/template" id="taskList-template">
+		<input type="text" name="owner" placeholder="your name" class="pull-right" />
 		<h2>Task List</h2>
-		<input type="checkbox" id="finished" /> hide finished
 		<hr />
 		<form class="form-inline">
-			<input type="text" placeholder="name" name="name" />
+			<span class="input-prepend">
+				<span class="add-on"><i class="icon-pencil"></i></span>
+				<input type="text" placeholder="name" name="name" />
+			</span>
 			<button type="submit" class="btn">new task</button>
 		</form>
+		<label class="checkbox">
+			<input type="checkbox" id="finished" />
+			hide finished
+		</label>
 		<div id="tasks"></div>
 	</script>
 
 	<script type="text/template" id="task-template">
 		<div class="task">
 			<input type="checkbox" class="finish" <%% print(status === 'finished' ? 'checked' : ''); %> />
-			<span class="name task-<%% print(status); %>"><strong><%%= name %></strong></span>
+			<span class="name task-<%% print(status); %>"><%%= name %></span>
 			<a href="#" class="delete"><small>delete</small></a>
-			<span class="owner"><%% print(owner); %></span>
+			<span class="owner"><%% print(owner ? owner : ''); %></span>
 		</div>
 	</script>
 </head>

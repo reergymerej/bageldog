@@ -11,8 +11,16 @@ var TaskView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var template = _.template( $('#task-template').html(), this.model.toJSON() );
+		var template = _.template( $('#task-template').html(), this.model.toJSON() ),
+			ownedClass = 'owned';
+		
 		this.$el.html(template);
+
+		if(this.model.get('owner') === localStorage.owner){
+			this.$el.addClass(ownedClass);
+		} else {
+			this.$el.removeClass(ownedClass);
+		};
 	},
 
 	events: {
@@ -62,6 +70,17 @@ var TaskView = Backbone.View.extend({
 	},
 
 	toggleClaim: function(ev){
-		console.log(ev);
+
+		var taskOwner = this.model.get('owner'),
+			appOwner = localStorage.owner,
+			newOwner;
+
+		if(taskOwner === appOwner){
+			newOwner = null;
+		} else {
+			newOwner = appOwner
+		};
+
+		this.model.set({owner: newOwner});
 	}
 })

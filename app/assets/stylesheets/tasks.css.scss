@@ -6,6 +6,23 @@
 	text-decoration:line-through;
 }
 
-.name {
-	cursor:pointer;
+.owned {
+	.name {
+		$owned: rgb(81, 40, 134);
+		color: $owned;
+		background-color: lighten(complement($owned), 20%);
+	}
+}
+
+.task {
+	line-height: 2em;
+
+	input[type="checkbox"] {
+		vertical-align: middle;
+		margin-right:.5em;
+	}
+	.name {
+		cursor:pointer;
+		font-size:1.5em;
+	}
 }
